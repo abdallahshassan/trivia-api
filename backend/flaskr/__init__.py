@@ -28,6 +28,7 @@ def create_app(test_config=None):
     @app.route("/api/categories")
     def get_categories():
         return jsonify({
+            "success": True,
             "categories": get_categories_dict(),
         })
 
@@ -39,20 +40,17 @@ def create_app(test_config=None):
         start = QUESTIONS_PER_PAGE * (page-1)
         end = start + QUESTIONS_PER_PAGE
 
+        total_questions = len(questions)
+        if start >= total_questions:
+            abort(404)
+
         return jsonify({
+            "success": True,
             "questions": [question.format() for question in questions[start:end]],
-            "total_questions": len(questions),
+            "total_questions": total_questions,
             "categories": get_categories_dict(),
             "current_category": None,
         })
-
-    # get Categories Dictionary
-    def get_categories_dict():
-        categories = Category.query.all()
-        categories_dict = {}
-        for category in categories:
-            categories_dict[category.id] = category.type
-        return categories_dict
 
     '''
     @TODO: 
@@ -106,9 +104,37 @@ def create_app(test_config=None):
     '''
 
     '''
+    ### Helper Methods ###
+    '''
+    # get categories dictionary
+    def get_categories_dict():
+        categories = Category.query.all()
+        categories_dict = {}
+        for category in categories:
+            categories_dict[category.id] = category.type
+        return categories_dict
+
+    '''
     @TODO: 
     Create error handlers for all expected errors 
     including 404 and 422. 
     '''
+    # handle not found error (404)
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            'success': False,
+            'error': 404,
+            'message': 'Not found'
+        }), 404
+
+    # handle internal server error (500)
+    @app.errorhandler(500)
+    def internal_server_error(error):
+        return jsonify({
+            'success': False,
+            'error': 500,
+            'message': 'Server error has occured, please try again!'
+        }), 500
 
     return app
