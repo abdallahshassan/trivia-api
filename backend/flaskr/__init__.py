@@ -24,24 +24,35 @@ def create_app(test_config=None):
                              'GET,POST,PUT,PATCH,DELETE,OPTIONS')
         return response
 
-    '''
-    @TODO: 
-    Create an endpoint to handle GET requests 
-    for all available categories.
-    '''
+    # GET categories endpoint
+    @app.route("/api/categories")
+    def get_categories():
+        return jsonify({
+            "categories": get_categories_dict(),
+        })
 
-    '''
-    @TODO: 
-    Create an endpoint to handle GET requests for questions, 
-    including pagination (every 10 questions). 
-    This endpoint should return a list of questions, 
-    number of total questions, current category, categories. 
+    # GET questions endpoint
+    @app.route("/api/questions")
+    def get_questions():
+        page = int(request.args.get('page', '1'))
+        questions = Question.query.all()
+        start = QUESTIONS_PER_PAGE * (page-1)
+        end = start + QUESTIONS_PER_PAGE
 
-    TEST: At this point, when you start the application
-    you should see questions and categories generated,
-    ten questions per page and pagination at the bottom of the screen for three pages.
-    Clicking on the page numbers should update the questions. 
-    '''
+        return jsonify({
+            "questions": [question.format() for question in questions[start:end]],
+            "total_questions": len(questions),
+            "categories": get_categories_dict(),
+            "current_category": None,
+        })
+
+    # get Categories Dictionary
+    def get_categories_dict():
+        categories = Category.query.all()
+        categories_dict = {}
+        for category in categories:
+            categories_dict[category.id] = category.type
+        return categories_dict
 
     '''
     @TODO: 
