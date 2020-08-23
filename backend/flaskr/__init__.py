@@ -13,14 +13,16 @@ def create_app(test_config=None):
     app = Flask(__name__)
     app.config.from_object('config')
     setup_db(app)
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-    '''
-    @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
-    '''
-
-    '''
-    @TODO: Use the after_request decorator to set Access-Control-Allow
-    '''
+    # CORS Headers
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Headers',
+                             'Content-Type,Authorization,true')
+        response.headers.add('Access-Control-Allow-Methods',
+                             'GET,POST,PUT,PATCH,DELETE,OPTIONS')
+        return response
 
     '''
     @TODO: 
