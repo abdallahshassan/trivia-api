@@ -131,12 +131,14 @@ def create_app(test_config=None):
         questions = Question.query.filter(
             Question.category == str(category_id)).all()
 
+        category = Category.query.get(category_id)
+
         return jsonify({
             "success": True,
             "questions": [question.format() for question in questions],
             "total_questions": len(questions),
-            "current_category": category_id,
-        })
+            "current_category": category.format(),
+        }), 200
 
     '''
     @TODO: 
