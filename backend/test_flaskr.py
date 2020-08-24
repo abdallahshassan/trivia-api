@@ -49,6 +49,24 @@ class TriviaTestCase(unittest.TestCase):
         # assertions
         self.assertEqual(response.status_code, 404)
 
+    def test_delete_question(self):
+        # create question for deletion
+        question = Question(
+            question='Test question for deletion',
+            answer='Answer of test question for deletion',
+            difficulty=1,
+            category='1')
+        question.insert()
+
+        response = self.client().delete('/api/questions/' + str(question.id))
+        # assertions
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_question_400(self):
+        response = self.client().delete('/api/questions/10000')
+        # assertions
+        self.assertEqual(response.status_code, 400)
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
