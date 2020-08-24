@@ -111,6 +111,15 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['total_questions'])
         self.assertTrue(data['questions'])
 
+    def test_get_quiz_question(self):
+        response = self.client().post(
+            '/api/quizzes', json={"quiz_category": {"type": "all", "id": 0}, "previous_questions": []})
+        data = json.loads(response.data)
+        # assertions
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['question'])
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
