@@ -30,7 +30,7 @@ def create_app(test_config=None):
         return jsonify({
             "success": True,
             "categories": get_categories_dict(),
-        })
+        }), 200
 
     # GET questions endpoint
     @app.route("/api/questions")
@@ -50,7 +50,7 @@ def create_app(test_config=None):
             "total_questions": total_questions,
             "categories": get_categories_dict(),
             "current_category": None,
-        })
+        }), 200
 
     # DELETE question endpoint
     @app.route("/api/questions/<int:question_id>", methods=['DELETE'])
