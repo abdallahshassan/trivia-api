@@ -64,7 +64,7 @@ def create_app(test_config=None):
         except:
             return jsonify({
                 "success": False,
-            }), 400
+            }), 422
 
     # POST question endpoint
     @app.route("/api/questions", methods=['POST'])

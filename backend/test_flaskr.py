@@ -57,15 +57,14 @@ class TriviaTestCase(unittest.TestCase):
             difficulty=1,
             category='1')
         question.insert()
-
         response = self.client().delete('/api/questions/' + str(question.id))
         # assertions
         self.assertEqual(response.status_code, 200)
 
-    def test_delete_question_400(self):
+    def test_delete_question_422(self):
         response = self.client().delete('/api/questions/10000')
         # assertions
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 422)
 
     def test_insert_question(self):
         insert_data = {
