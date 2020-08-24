@@ -88,18 +88,17 @@ def create_app(test_config=None):
         try:
             if (len(posted_data['question']) == 0
                 or len(posted_data['answer']) == 0
-                or len(posted_data['category']) == 0
+                or len(str(posted_data['category'])) == 0
                     or int(posted_data['difficulty']) <= 0):
                 raise ValueError('Invalid Data')
         except:
             return jsonify({
                 "success": False,
             }), 400
-
         # insert question
         try:
             question = Question(posted_data['question'], posted_data['answer'],
-                                posted_data['category'], int(posted_data['difficulty']))
+                                str(posted_data['category']), int(posted_data['difficulty']))
             question.insert()
             return jsonify({
                 "success": True,
