@@ -67,6 +67,34 @@ class TriviaTestCase(unittest.TestCase):
         # assertions
         self.assertEqual(response.status_code, 400)
 
+    def test_insert_question(self):
+        insert_data = {
+            "question": "Test question for insertion",
+            "answer": "Answer of test question for insertion",
+            "difficulty": 1,
+            "category": "1",
+        }
+        response = self.client().post('/api/questions', json=insert_data)
+        data = json.loads(response.data)
+        # assertions
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['question_id'])
+        # delete that question
+        question = Question.query.get(data['question_id'])
+        question.delete()
+
+    def test_insert_question_400(self):
+        insert_data = {
+            "question": "Test question for insertion",
+            "answer": "Answer of test question for insertion",
+        }
+        response = self.client().post('/api/questions', json=insert_data)
+        data = json.loads(response.data)
+        # assertions
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(data['success'], False)
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":

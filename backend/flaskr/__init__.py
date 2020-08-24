@@ -66,16 +66,35 @@ def create_app(test_config=None):
                 "success": False,
             }), 400
 
-    '''
-    @TODO: 
-    Create an endpoint to POST a new question, 
-    which will require the question and answer text, 
-    category, and difficulty score.
+    # POST question endpoint
+    @app.route("/api/questions", methods=['POST'])
+    def add_question():
+        # validate data
+        try:
+            posted_data = request.get_json()
+            if (len(posted_data['question']) == 0
+                or len(posted_data['answer']) == 0
+                or len(posted_data['category']) == 0
+                    or int(posted_data['difficulty']) <= 0):
+                raise ValueError('Invalid Data')
+        except:
+            return jsonify({
+                "success": False,
+            }), 400
 
-    TEST: When you submit a question on the "Add" tab, 
-    the form will clear and the question will appear at the end of the last page
-    of the questions list in the "List" tab.  
-    '''
+        # insert question
+        try:
+            question = Question(posted_data['question'], posted_data['answer'],
+                                posted_data['category'], int(posted_data['difficulty']))
+            question.insert()
+            return jsonify({
+                "success": True,
+                "question_id": question.id,
+            }), 200
+        except:
+            return jsonify({
+                "success": False,
+            }), 422
 
     '''
     @TODO: 
