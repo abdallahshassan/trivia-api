@@ -161,11 +161,6 @@ def create_app(test_config=None):
             categories_dict[category.id] = category.type
         return categories_dict
 
-    '''
-    @TODO: 
-    Create error handlers for all expected errors 
-    including 404 and 422. 
-    '''
     # handle not found error (404)
     @app.errorhandler(404)
     def not_found(error):
@@ -174,6 +169,15 @@ def create_app(test_config=None):
             'error': 404,
             'message': 'Not found'
         }), 404
+
+    # handle unprocessable entity error (422)
+    @app.errorhandler(422)
+    def unprocessable_entity_error(error):
+        return jsonify({
+            'success': False,
+            'error': 422,
+            'message': 'Unprocessable Entity'
+        }), 422
 
     # handle internal server error (500)
     @app.errorhandler(500)
