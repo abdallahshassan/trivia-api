@@ -69,9 +69,23 @@ def create_app(test_config=None):
     # POST question endpoint
     @app.route("/api/questions", methods=['POST'])
     def add_question():
-        # validate data
+        # determine request
         try:
             posted_data = request.get_json()
+            if 'question' in posted_data:
+                return handle_add_question(posted_data)
+            elif 'search_term' in posted_data:
+                return handle_search_question(posted_data)
+            else:
+                raise ValueError('Invalid Request')
+        except:
+            return jsonify({
+                "success": False,
+            }), 400
+
+    def handle_add_question(posted_data):
+        # validate data
+        try:
             if (len(posted_data['question']) == 0
                 or len(posted_data['answer']) == 0
                 or len(posted_data['category']) == 0
@@ -96,16 +110,21 @@ def create_app(test_config=None):
                 "success": False,
             }), 422
 
-    '''
-    @TODO: 
-    Create a POST endpoint to get questions based on a search term. 
-    It should return any questions for whom the search term 
-    is a substring of the question. 
-
-    TEST: Search by any phrase. The questions list will update to include 
-    only question that include that string within their question. 
-    Try using the word "title" to start. 
-    '''
+    def handle_search_question(posted_data):
+        # search question
+        try:
+            questions = Question.query.filter(Question.question.ilike(
+                '%' + posted_data['search_term'] + '%')).all()
+            return jsonify({
+                "success": True,
+                "questions": [question.format() for question in questions],
+                "total_questions": len(questions),
+                "current_category": None,
+            })
+        except:
+            return jsonify({
+                "success": False,
+            }), 422
 
     '''
     @TODO: 
